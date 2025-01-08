@@ -6,10 +6,11 @@ function App() {
   const [userName, setUserName] = useState(localStorage.getItem("userName"));
 
   useEffect(() => {
+    console.log("Initializing Facebook SDK...");
     // Khởi tạo Facebook SDK
     window.fbAsyncInit = function () {
       window.FB.init({
-        appId: "1131033075055597", // Thay YOUR_APP_ID bằng App ID của bạn
+        appId: "1131033075055597",
         cookie: true,
         xfbml: true,
         version: "v17.0", // Sử dụng phiên bản Facebook API mới nhất
@@ -17,6 +18,7 @@ function App() {
 
       // Kiểm tra trạng thái đăng nhập
       window.FB.getLoginStatus(function (response) {
+        console.log("Login status response:", response);
         statusChangeCallback(response);
       });
     };
@@ -25,8 +27,10 @@ function App() {
   // Hàm xử lý trạng thái đăng nhập
   const statusChangeCallback = (response) => {
     if (response.status === "connected") {
+      console.log("User is connected:", response);
       // Lấy thông tin người dùng
       window.FB.api("/me", { fields: "name" }, (user) => {
+        console.log("User data from Facebook API:", user);
         setUserName(user.name);
         localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
         // Hiển thị thông báo chào mừng
@@ -40,16 +44,21 @@ function App() {
           progress: undefined,
         });
       });
+    } else {
+      console.warn("User is not connected or needs to log in:", response);
     }
   };
 
   // Hàm đăng nhập với Facebook
   const handleLogin = () => {
+    console.log("User clicked login button");
     window.FB.login(
       (response) => {
+        console.log("Login response:", response);
         if (response.authResponse) {
           // Lấy thông tin người dùng sau khi đăng nhập
           window.FB.api("/me", { fields: "name" }, (user) => {
+            console.log("User data after login:", user);
             setUserName(user.name);
             localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
             // Hiển thị thông báo chào mừng
