@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facebook Welcome</title>
+
+    <!-- Facebook Open Graph meta tags -->
+    <meta property="og:url" content="https://fb-greeting.netlify.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Click để xem lời chào!" />
+    <meta property="og:description" content="Một lời chào đặc biệt dành cho bạn" />
+    <meta property="og:image" content="https://photographylife.com/wp-content/uploads/2014/06/Nikon-D810-Image-Sample-6.jpg" />
+
+    <!-- Facebook SDK -->
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="root"></div>
-</body>
+  </body>
 </html>
