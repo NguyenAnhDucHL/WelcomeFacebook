@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [userName, setUserName] = useState(null);
+  const [userName, setUserName] = useState(localStorage.getItem("userName"));
 
   useEffect(() => {
     // Khởi tạo Facebook SDK
@@ -28,6 +28,7 @@ function App() {
       // Lấy thông tin người dùng
       window.FB.api("/me", { fields: "name" }, (user) => {
         setUserName(user.name);
+        localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
         // Hiển thị thông báo chào mừng
         toast.success(`Chào mừng bạn ${user.name} đến thăm!`, {
           position: "top-center",
@@ -50,6 +51,7 @@ function App() {
           // Lấy thông tin người dùng sau khi đăng nhập
           window.FB.api("/me", { fields: "name" }, (user) => {
             setUserName(user.name);
+            localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
             // Hiển thị thông báo chào mừng
             toast.success(`Chào mừng bạn ${user.name} đến thăm!`, {
               position: "top-center",
