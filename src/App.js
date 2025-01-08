@@ -10,7 +10,7 @@ function App() {
     // Khởi tạo Facebook SDK
     window.fbAsyncInit = function () {
       window.FB.init({
-        appId: "1131033075055597",
+        appId: "1131033075055597", // Thay YOUR_APP_ID bằng App ID của bạn
         cookie: true,
         xfbml: true,
         version: "v17.0", // Sử dụng phiên bản Facebook API mới nhất
@@ -19,30 +19,44 @@ function App() {
       // Kiểm tra trạng thái đăng nhập
       window.FB.getLoginStatus(function (response) {
         console.log("Login status response:", response);
-        statusChangeCallback(response);
+        if (response.error) {
+          console.error("Error during getLoginStatus:", response.error);
+        } else {
+          statusChangeCallback(response);
+        }
       });
     };
+
+    // Xử lý trường hợp SDK không tải được
+    if (!window.FB) {
+      console.error("Facebook SDK không được tải.");
+    }
   }, []);
 
   // Hàm xử lý trạng thái đăng nhập
   const statusChangeCallback = (response) => {
+    console.log("StatusChangeCallback response:", response);
     if (response.status === "connected") {
       console.log("User is connected:", response);
       // Lấy thông tin người dùng
       window.FB.api("/me", { fields: "name" }, (user) => {
-        console.log("User data from Facebook API:", user);
-        setUserName(user.name);
-        localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
-        // Hiển thị thông báo chào mừng
-        toast.success(`Chào mừng bạn ${user.name} đến thăm!`, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        if (user.error) {
+          console.error("Error fetching user data:", user.error);
+        } else {
+          console.log("User data from Facebook API:", user);
+          setUserName(user.name);
+          localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
+          // Hiển thị thông báo chào mừng
+          toast.success(`Chào mừng bạn ${user.name} đến thăm!`, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
       });
     } else {
       console.warn("User is not connected or needs to log in:", response);
@@ -52,28 +66,36 @@ function App() {
   // Hàm đăng nhập với Facebook
   const handleLogin = () => {
     console.log("User clicked login button");
+    if (!window.FB) {
+      console.error("Facebook SDK chưa sẵn sàng.");
+      return;
+    }
     window.FB.login(
       (response) => {
         console.log("Login response:", response);
         if (response.authResponse) {
           // Lấy thông tin người dùng sau khi đăng nhập
           window.FB.api("/me", { fields: "name" }, (user) => {
-            console.log("User data after login:", user);
-            setUserName(user.name);
-            localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
-            // Hiển thị thông báo chào mừng
-            toast.success(`Chào mừng bạn ${user.name} đến thăm!`, {
-              position: "top-center",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            });
+            if (user.error) {
+              console.error("Error fetching user data after login:", user.error);
+            } else {
+              console.log("User data after login:", user);
+              setUserName(user.name);
+              localStorage.setItem("userName", user.name); // Lưu tên vào localStorage
+              // Hiển thị thông báo chào mừng
+              toast.success(`Chào mừng bạn ${user.name} đến thăm!`, {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+            }
           });
         } else {
-          alert("Bạn đã từ chối đăng nhập!");
+          console.warn("Người dùng từ chối đăng nhập:", response);
         }
       },
       { scope: "public_profile" } // Quyền cần yêu cầu
